@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingCart, Menu, X } from "lucide-react";
 
 import { logoutBuyer } from "../../redux/slices/buyerAuthSlice";
 import { fetchSavedProducts } from "../../redux/slices/savedProductSlice";
+import { fetchCart, clearCart } from "../../redux/slices/cartSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -21,42 +22,36 @@ export default function Navbar() {
     (state) => state.savedProducts?.items?.length || 0,
   );
 
+  // Fetch both Cart and Saved Products when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchSavedProducts());
+      dispatch(fetchCart());
     }
   }, [isAuthenticated, dispatch]);
 
   const handleLogout = async () => {
     await dispatch(logoutBuyer());
+    dispatch(clearCart()); // Clear cart state on logout
     navigate("/");
   };
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* =====================================
-            LOGO
-        ====================================== */}
-
+        {/* LOGO */}
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-600 text-xl font-bold text-white shadow-lg shadow-green-200">
             A
           </div>
-
           <div>
             <p className="text-lg font-extrabold tracking-tight text-gray-900">
               AgriChoice
             </p>
-
-            <p className="-mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-green-600"></p>
           </div>
         </Link>
 
-        {/* =====================================
-            DESKTOP NAV
-        ====================================== */}
-
+        {/* DESKTOP NAV */}
         <nav className="hidden items-center gap-8 md:flex">
           <Link
             to="/"
@@ -64,21 +59,18 @@ export default function Navbar() {
           >
             Home
           </Link>
-
           <a
             href="#products"
             className="text-sm font-medium text-gray-600 transition hover:text-green-600"
           >
             Products
           </a>
-
           <a
             href="#about"
             className="text-sm font-medium text-gray-600 transition hover:text-green-600"
           >
             About
           </a>
-
           <a
             href="#contact"
             className="text-sm font-medium text-gray-600 transition hover:text-green-600"
@@ -87,10 +79,7 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* =====================================
-            DESKTOP AUTH & CART & SAVED
-        ====================================== */}
-
+        {/* DESKTOP ACTIONS */}
         <div className="hidden items-center gap-3 md:flex">
           {isAuthenticated && (
             <button
@@ -100,9 +89,8 @@ export default function Navbar() {
               title="Saved for Later"
             >
               <Heart size={22} strokeWidth={2} />
-
               {savedCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
                   {savedCount}
                 </span>
               )}
@@ -112,10 +100,11 @@ export default function Navbar() {
           <button
             onClick={() => navigate("/buyer/cart")}
             className="relative rounded-xl p-2 text-gray-700 transition hover:bg-green-50"
+            title="Cart"
           >
-            🛒
+            <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-xs font-bold text-white">
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-green-600 px-1 text-[10px] font-bold text-white">
                 {cartCount}
               </span>
             )}
@@ -124,13 +113,12 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>
               <Link
-                to="/"
+                to="/buyer/profile"
                 className="flex items-center gap-2 rounded-full bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
                   {buyer?.name?.charAt(0)?.toUpperCase() || "B"}
                 </span>
-
                 <span className="max-w-[120px] truncate">
                   {buyer?.name || "Buyer"}
                 </span>
@@ -151,7 +139,6 @@ export default function Navbar() {
               >
                 Login
               </Link>
-
               <Link
                 to="/buyer/register"
                 className="rounded-xl bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-green-200 transition hover:bg-green-700"
@@ -162,22 +149,17 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* =====================================
-            MOBILE BUTTON & CART & SAVED
-        ====================================== */}
-
+        {/* MOBILE TOGGLE */}
         <div className="flex items-center gap-2 md:hidden">
           {isAuthenticated && (
             <button
               type="button"
               onClick={() => navigate("/buyer/saved")}
-              className="relative rounded-xl p-2 text-gray-700 transition hover:bg-red-50 hover:text-red-500"
-              title="Saved for Later"
+              className="relative rounded-xl p-2 text-gray-700"
             >
-              <Heart size={22} strokeWidth={2} />
-
+              <Heart size={22} />
               {savedCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
                   {savedCount}
                 </span>
               )}
@@ -186,11 +168,11 @@ export default function Navbar() {
 
           <button
             onClick={() => navigate("/buyer/cart")}
-            className="relative rounded-xl p-2 text-gray-700 hover:bg-green-50"
+            className="relative rounded-xl p-2 text-gray-700"
           >
-            🛒
+            <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-xs font-bold text-white">
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-green-600 px-1 text-[10px] font-bold text-white">
                 {cartCount}
               </span>
             )}
@@ -200,15 +182,12 @@ export default function Navbar() {
             onClick={() => setMobileOpen((value) => !value)}
             className="rounded-xl border border-gray-200 p-2 text-gray-700"
           >
-            {mobileOpen ? "✕" : "☰"}
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* =======================================
-          MOBILE MENU
-      ======================================== */}
-
+      {/* MOBILE MENU */}
       {mobileOpen && (
         <div className="border-t border-gray-100 bg-white px-4 py-5 md:hidden">
           <nav className="flex flex-col gap-1">
@@ -219,7 +198,6 @@ export default function Navbar() {
             >
               Home
             </Link>
-
             <a
               href="#products"
               onClick={() => setMobileOpen(false)}
@@ -227,27 +205,13 @@ export default function Navbar() {
             >
               Products
             </a>
-
-            <a
-              href="#about"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-xl px-4 py-3 font-medium text-gray-600 hover:bg-gray-50"
-            >
-              About
-            </a>
-
-            <a
-              href="#contact"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-xl px-4 py-3 font-medium text-gray-600 hover:bg-gray-50"
-            >
-              Contact
-            </a>
-
             <div className="mt-3 border-t border-gray-100 pt-4">
               {isAuthenticated ? (
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleLogout();
+                  }}
                   className="w-full rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600"
                 >
                   Logout
@@ -261,7 +225,6 @@ export default function Navbar() {
                   >
                     Login
                   </Link>
-
                   <Link
                     to="/buyer/register"
                     onClick={() => setMobileOpen(false)}

@@ -11,6 +11,7 @@ import {
   removeSavedProduct,
   optimisticSave,
   optimisticRemove,
+  restoreRemovedProduct,
 } from "../../redux/slices/savedProductSlice";
 
 export default function ProductCard({ product }) {
@@ -30,10 +31,15 @@ export default function ProductCard({ product }) {
     (state) => state.savedProducts?.items || [],
   );
 
-  const isSaved = savedProducts.some((item) => item.product_id === product.id);
+  // Check if saved using flexible ID matching (handles nested objects & string/number IDs)
+  const isSaved = savedProducts.some((item) => {
+    const savedId = item.product_id ?? item.product?.id ?? item.id;
+    return String(savedId) === String(product.id);
+  });
 
-  const handleSaveProduct = (e) => {
+  const handleSaveProduct = async (e) => {
     e.stopPropagation();
+    e.preventDefault();
 
     if (!isBuyerLoggedIn) {
       setShowLoginModal(true);
@@ -41,33 +47,38 @@ export default function ProductCard({ product }) {
     }
 
     // ================================
-    // REMOVE
+    // REMOVE FROM SAVED
     // ================================
     if (isSaved) {
-      // UI changes immediately
+      // 1. Instantly update UI
       dispatch(optimisticRemove(product.id));
 
-      // Database request runs afterwards
-      dispatch(removeSavedProduct(product.id));
-
+      // 2. Sync with database and handle failure rollback
+      try {
+        await dispatch(removeSavedProduct(product.id)).unwrap();
+      } catch (error) {
+        // Rollback if request fails
+        dispatch(restoreRemovedProduct(product));
+      }
       return;
     }
 
     // ================================
-    // SAVE
+    // SAVE PRODUCT
     // ================================
-    // UI changes IMMEDIATELY
+    // 1. Instantly update UI
     dispatch(optimisticSave(product));
 
-    // Database request runs in background
-    dispatch(saveProduct(product.id));
+    // 2. Sync with database and handle failure rollback
+    try {
+      await dispatch(saveProduct(product.id)).unwrap();
+    } catch (error) {
+      // Rollback if request fails
+      dispatch(optimisticRemove(product.id));
+    }
   };
 
   const handleAddToCart = async () => {
-    // ==========================================
-    // CHECK LOGIN
-    // ==========================================
-
     if (!buyerAuthenticated) {
       setShowLoginModal(true);
       return;
@@ -75,14 +86,10 @@ export default function ProductCard({ product }) {
 
     try {
       setAddingToCart(true);
-
       await cartService.addToCart(product.id, 1);
-
-      // Optional toast
       alert("Product added to cart.");
     } catch (error) {
       console.error("ADD TO CART ERROR:", error);
-
       alert(error.response?.data?.detail || "Unable to add product to cart.");
     } finally {
       setAddingToCart(false);
