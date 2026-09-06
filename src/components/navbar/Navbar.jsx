@@ -41,17 +41,15 @@ export default function Navbar() {
 
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-600 text-xl font-bold text-white shadow-lg shadow-green-200">
-            S
+            A
           </div>
 
           <div>
             <p className="text-lg font-extrabold tracking-tight text-gray-900">
-              Sewa
+              AgriChoice
             </p>
 
-            <p className="-mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-green-600">
-              Foundation
-            </p>
+            <p className="-mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-green-600"></p>
           </div>
         </Link>
 

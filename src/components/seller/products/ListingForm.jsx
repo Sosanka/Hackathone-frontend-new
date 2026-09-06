@@ -488,7 +488,7 @@ export default function ListingForm({ product = null, onSuccess, onCancel }) {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="mb-2 block text-sm font-medium text-gray-700">
             Latitude
           </label>
@@ -504,9 +504,9 @@ export default function ListingForm({ product = null, onSuccess, onCancel }) {
             placeholder="26.1445"
             className={inputClass}
           />
-        </div>
+        </div> */}
 
-        <div>
+        {/* <div>
           <label className="mb-2 block text-sm font-medium text-gray-700">
             Longitude
           </label>
@@ -522,7 +522,7 @@ export default function ListingForm({ product = null, onSuccess, onCancel }) {
             placeholder="91.7362"
             className={inputClass}
           />
-        </div>
+        </div> */}
       </div>
 
       {/* =====================================

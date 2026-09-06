@@ -9,7 +9,7 @@ export default function BuyerRegister() {
         <div className="grid w-full overflow-hidden rounded-3xl bg-white shadow-xl lg:grid-cols-2">
           <div className="hidden bg-green-700 p-12 text-white lg:block">
             <p className="text-sm font-semibold uppercase tracking-wider text-green-100">
-              Sewa Foundation
+              AgriChoice
             </p>
 
             <h1 className="mt-8 text-4xl font-bold leading-tight">
@@ -25,7 +25,7 @@ export default function BuyerRegister() {
           <div className="p-6 sm:p-10">
             <div className="mb-8">
               <p className="text-sm font-semibold text-green-600 lg:hidden">
-                Sewa Foundation
+                AgriChoice
               </p>
 
               <h2 className="mt-2 text-3xl font-bold text-gray-900">

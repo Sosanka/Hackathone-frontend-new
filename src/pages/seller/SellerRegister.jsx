@@ -17,7 +17,7 @@ export default function SellerRegister() {
             </h1>
 
             <p className="mt-2 text-gray-500">
-              Register to start selling with Sewa Foundation
+              Register to start selling with AgriChoice
             </p>
           </div>
 

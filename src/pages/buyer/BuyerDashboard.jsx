@@ -39,7 +39,7 @@ export default function BuyerDashboard() {
       <header className="border-b bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Sewa Foundation</h1>
+            <h1 className="text-xl font-bold text-gray-900">AgriChoice</h1>
 
             <p className="text-sm text-gray-500">Buyer Dashboard</p>
           </div>
